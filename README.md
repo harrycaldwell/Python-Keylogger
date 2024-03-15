@@ -9,6 +9,9 @@ The key logger makes use of the following librarys:
 - **ftplib**
 - **threading**
 
+
+[NOTE!]
+There are bugs that are known in this software, when closing the keylogger it will close with an error
 ## **Disclaimer!!!**
 
 **Do not use this software on machines other than your own without the owners explicit permission!!**
